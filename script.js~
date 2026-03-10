@@ -1,0 +1,204 @@
+const words=[
+{text:"Full Stack Developer",color:"#FFD700"},   // gold
+{text:"AI Engineer",color:"#FF8C00"},             // orange
+{text:"Cybersecurity Enthusiast",color:"#00FFFF"},// cyan
+{text:"Software Engineer",color:"#22c55e"}        // green
+];
+let i=0,j=0,del=false;
+function type(){
+let el=document.getElementById("typing");
+let w=words[i].text;
+el.style.color=words[i].color;
+if(!del){
+el.textContent=w.substring(0,j++);
+if(j>w.length){del=true;setTimeout(type,1000);return;}
+}else{
+el.textContent=w.substring(0,j--);
+if(j==0){del=false;i=(i+1)%words.length;}
+}
+setTimeout(type,del?50:90);
+}
+type();
+
+/* reveal */
+const obs=new IntersectionObserver(e=>{
+e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("show");});
+});
+document.querySelectorAll(".section,.card,.skillCard,.eduCard")
+.forEach(el=>obs.observe(el));
+
+/* scroll button */
+const btn=document.getElementById("topBtn");
+window.addEventListener("scroll",()=>{
+btn.style.display = window.scrollY > 300 ? "flex" : "none";
+});
+btn.onclick=()=>window.scrollTo({top:0,behavior:"smooth"});
+
+/* theme toggle */
+const toggle=document.getElementById("themeToggle");
+toggle.onclick=()=>{
+document.body.classList.toggle("light");
+toggle.innerHTML=document.body.classList.contains("light")
+?'<i class="ri-moon-line"></i>'
+:'<i class="ri-sun-line"></i>';
+};
+
+/* particles */
+const c=document.getElementById("particles");
+const ctx=c.getContext("2d");
+function resize(){c.width=innerWidth;c.height=innerHeight;}
+resize();window.onresize=resize;
+
+let p=[];
+for(let i=0;i<220;i++){   // increased particles
+p.push({
+x:Math.random()*c.width,
+y:Math.random()*c.height,
+dx:(Math.random()-.5)*0.7,
+dy:(Math.random()-.5)*0.7,
+r:Math.random()*2.2
+});
+}
+
+function draw(){
+ctx.clearRect(0,0,c.width,c.height);
+ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--accent');
+p.forEach(o=>{
+o.x+=o.dx;
+o.y+=o.dy;
+ctx.beginPath();
+ctx.arc(o.x,o.y,o.r,0,6.28);
+ctx.fill();
+});
+requestAnimationFrame(draw);
+}
+draw();
+
+/* tilt */
+const profile=document.querySelector(".profile");
+profile.addEventListener("mousemove",e=>{
+const r=profile.getBoundingClientRect();
+const x=e.clientX-r.left;
+const y=e.clientY-r.top;
+profile.style.transform=`rotateX(${-(y-r.height/2)/12}deg) rotateY(${(x-r.width/2)/12}deg) scale(1.05)`;
+});
+profile.addEventListener("mouseleave",()=>profile.style.transform="rotateX(0) rotateY(0)");
+
+/* cursor glow */
+const spotlight=document.getElementById("spotlight");
+document.addEventListener("mousemove",e=>{
+spotlight.style.left=e.clientX+"px";
+spotlight.style.top=e.clientY+"px";
+});
+
+
+/* ===========================
+   NAV ACTIVE LINK ON SCROLL
+=========================== */
+
+const sections = document.querySelectorAll("section");
+const navLinks = document.querySelectorAll(".navLinks a");
+
+window.addEventListener("scroll", () => {
+
+let current = "";
+
+sections.forEach(section => {
+
+const sectionTop = section.offsetTop - 150;
+const sectionHeight = section.clientHeight;
+
+if (scrollY >= sectionTop) {
+current = section.getAttribute("id");
+}
+
+});
+
+navLinks.forEach(link => {
+
+link.classList.remove("active");
+
+if (link.getAttribute("href") === "#" + current) {
+link.classList.add("active");
+}
+
+});
+
+});
+
+
+/* ===========================
+   GitHub Projects Loader
+=========================== */
+
+const githubUser = "sonararadhya";
+const projectsGrid = document.getElementById("projectsGrid");
+
+async function loadProjects(){
+
+try{
+
+const res = await fetch(`https://api.github.com/users/${githubUser}/repos?sort=updated`);
+const repos = await res.json();
+
+repos
+.filter(repo => !repo.fork) // ignore forks
+.sort((a,b)=>b.stargazers_count-a.stargazers_count)
+.slice(0,8) // show top 8
+.forEach(repo=>{
+
+const card=document.createElement("div");
+card.className="projectCard";
+
+card.innerHTML=`
+
+<h3>${repo.name}</h3>
+
+<p>${repo.description || "Project repository"}</p>
+
+<div class="tech">
+${repo.language || ""}
+⭐ ${repo.stargazers_count}
+</div>
+
+`;
+
+card.onclick=()=>window.open(repo.html_url,"_blank");
+
+projectsGrid.appendChild(card);
+
+/* reveal animation */
+obs.observe(card);
+
+/* tilt effect */
+card.addEventListener("mousemove",e=>{
+
+const r=card.getBoundingClientRect();
+const x=e.clientX-r.left;
+const y=e.clientY-r.top;
+
+card.style.transform=
+`rotateX(${-(y-r.height/2)/14}deg)
+ rotateY(${(x-r.width/2)/14}deg)
+ scale(1.05)`;
+
+});
+
+card.addEventListener("mouseleave",()=>{
+card.style.transform="";
+});
+
+});
+
+
+
+
+}catch(err){
+
+projectsGrid.innerHTML="<p>Failed to load projects</p>";
+
+}
+
+}
+
+loadProjects();

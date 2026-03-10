@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aradhya Sonar | Portfolio</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-77EM8GJYF4"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-77EM8GJYF4');
+</script>
+<link rel="icon" type="image/png" sizes="32x32" href="Images/profile.png">
+<link rel="stylesheet" href="styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+</head>
+
+<body>
+
+<canvas id="particles"></canvas>
+
+<!-- animated shapes for light mode -->
+<div class="lightShapes">
+<div></div><div></div><div></div><div></div>
+</div>
+
+<div id="spotlight"></div>
+<button id="topBtn">^</button>
+
+<nav class="nav">
+<div class="logo">
+<i class="ri-macbook-line"></i>
+<span>ARADHYA</span>
+<button id="themeToggle" class="themeBtn">
+<i class="ri-moon-line"></i>
+</button>
+</div>
+
+<ul class="navLinks">
+<li><a href="#home">Home</a></li>
+<li><a href="#about">About</a></li>
+<li><a href="#skills">Skills</a></li>
+<li><a href="#education">Education</a></li>
+<li><a href="#projects">Projects</a></li>
+<li><a href="#work">Work Experience</a></li>
+<li><a href="#contact">Contact</a></li>
+</ul>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="hero">
+<div class="heroWrap">
+
+<div class="profile">
+<img src="Images/profile1.jpg">
+</div>
+
+<div class="heroText">
+<h1>Hello there, I'm Aradhya Santosh Sonar</h1>
+<h3 id="typing"></h3>
+
+<a class="resumeBtn"
+href="https://drive.google.com/file/d/1ti1gKTJQLeFYScZ51a6w8xu7r19g0ekP/view"
+target="_blank">Resume</a>
+
+<div class="socials">
+<a href="https://github.com/sonararadhya" target="_blank" class="socialBtn">
+<i class="ri-github-fill"></i> GitHub
+</a>
+
+<a href="https://linkedin.com/in/aradhya-sonar" target="_blank" class="socialBtn">
+<i class="ri-linkedin-box-fill"></i> LinkedIn
+</a>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section">
+<h2>About Me</h2>
+<p>
+Software Developer experienced in building scalable applications and intelligent systems using modern web and data technologies. Skilled in Python, JavaScript, and the MERN stack, with hands-on experience developing full-stack applications, integrating APIs, and designing efficient backend solutions.
+
+I have worked on projects involving AI-driven solutions, real-time applications, and interactive systems, including machine learning–based chatbots and applications that incorporate intelligent decision-making features. My technical toolkit includes React.js, Django, TensorFlow, Scikit-learn, OpenCV, Pandas, and NumPy for building data-driven and responsive applications.
+
+With a strong foundation in data structures, algorithms, and object-oriented programming, I focus on writing efficient, maintainable, and scalable code. I also have experience working with SQL databases, AWS cloud services, and Linux environments.
+
+I am passionate about solving complex technical problems and continuously learning new technologies in full-stack development, AI/ML, cloud computing, and cybersecurity to build impactful software solutions.
+</p>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="section">
+<h2>My Skills</h2>
+<div class="grid">
+
+<div class="skillCard"><i class="devicon-python-plain"></i>Python</div>
+<div class="skillCard"><i class="devicon-java-plain"></i>Java</div>
+<div class="skillCard"><i class="devicon-mysql-plain"></i>SQL</div>
+<div class="skillCard"><i class="devicon-javascript-plain"></i>JavaScript</div>
+<div class="skillCard"><i class="devicon-html5-plain"></i>HTML5</div>
+<div class="skillCard"><i class="devicon-css3-plain"></i>CSS3</div>
+<div class="skillCard"><i class="devicon-react-original"></i>ReactJS</div>
+<div class="skillCard"><i class="devicon-php-plain"></i>PHP</div>
+<div class="skillCard"><i class="devicon-mongodb-plain"></i>MongoDB</div>
+<div class="skillCard"><i class="devicon-amazonwebservices-plain"></i>AWS</div>
+<div class="skillCard"><i class="devicon-linux-plain"></i>Linux</div>
+<div class="skillCard"><i class="devicon-git-plain"></i>Git</div>
+<div class="skillCard"><i class="devicon-github-original"></i>GitHub</div>
+
+</div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education" class="section">
+<h2>My Education</h2>
+
+<div class="eduRow">
+
+<div class="eduCard">
+<img src="Images/PESMCOE.jpg">
+<div class="eduText">
+<h3>Bachelor of Engineering - SPPU</h3>
+<h3>Information Technology</h3>
+<p>PES Modern College of Engineering, Pune</p>
+<span>2023–2026 • CGPA 7.56</span>
+</div>
+</div>
+
+<div class="eduCard">
+<img src="Images/GovernmentPolytechnicAw.jpg">
+<div class="eduText">
+<h3>Diploma - MSBTE</h3>
+<h3>Information Technology</h3>
+<p>Government Polytechnic, Awasari Pune</p>
+<span>2020–2023 • 87.19%</span>
+</div>
+</div>
+
+<div class="eduCard">
+<img src="Images/RadiantInternational.jpg">
+<div class="eduText">
+<h3>Secondary School Certificate - CBSE</h3>
+<p>Radiant International School, Surat Gujarat</p>
+<span>2019–2020 • 88.60%</span>
+</div>
+</div>
+
+</div>
+</section>
+
+
+<!-- PROJECTS -->
+<section id="projects" class="section">
+<h2>Projects & Activity</h2>
+<div id="projectsGrid" class="grid">
+</div>
+</section>
+
+<!-- WORK -->
+<section id="work" class="section">
+<h2>Work Experience</h2>
+
+<div class="workGrid">
+
+<div class="workCard">
+
+<h3>CodTech IT Solutions Pvt Ltd</h3>
+<h4>Intern – MERN Stack Development</h4>
+
+<ul>
+<li>Developed <b>Bargain.com</b>, a full-stack price negotiation marketplace using the MERN stack.</li>
+
+<li>Implemented real-time price bargaining using an interactive negotiation slider between buyers and sellers.</li>
+
+<li>Built authentication systems for users and sellers with secure login and account management.</li>
+
+<li>Created product listing features with image uploads, cart management, and order confirmation workflow.</li>
+
+<li>Developed scalable REST APIs using <b>Node.js</b> and <b>Express.js</b> and integrated <b>MongoDB</b> for product and transaction data.</li>
+
+<li>Designed a responsive React UI with particle animations and a yellow-purple themed interface.</li>
+
+</ul>
+
+</div>
+
+
+<div class="workCard">
+
+<h3>Om Multitherm Engineers Pvt Ltd</h3>
+<h4>Industrial Training – Database Handling</h4>
+
+<ul>
+<li>Worked on managing and organizing company data using structured database systems.</li>
+
+<li>Handled database records, data entry, and data validation for internal operations.</li>
+
+<li>Assisted in maintaining structured data storage and improving database organization.</li>
+
+<li>Supported database management tasks related to industrial production data.</li>
+
+</ul>
+
+</div>
+
+</div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="section">
+<h2> Get in Touch or Leave a Message</h2>
+
+<form class="contactForm" action="https://formspree.io/f/xeerapkl" method="POST">
+
+<input type="text" name="name" placeholder="Your Name" required>
+
+<input type="email" name="email" placeholder="Email" required>
+
+<textarea name="message" placeholder="Message" required></textarea>
+
+<button type="submit">Send Message</button>
+
+</form>
+
+</section>
+
+<div class="footer">
+
+<div class="footerGrid">
+
+<!-- about -->
+<div class="footerCol">
+<h3>Aradhya's Portfolio</h3>
+
+<p>
+Thank you for visiting my personal portfolio website.
+Feel free to connect with me through my social platforms.
+</p>
+
+<p>Keep Building 🚀 Let's connect!</p>
+
+<div class="footerSocials">
+
+<a href="https://github.com/sonararadhya" target="_blank" class="footerBtn">
+<i class="ri-github-fill"></i> GitHub
+</a>
+
+<a href="https://linkedin.com/in/aradhya-sonar" target="_blank" class="footerBtn">
+<i class="ri-linkedin-box-fill"></i> LinkedIn
+</a>
+
+</div>
+
+</div>
+
+<!-- quick links -->
+<div class="footerCol">
+<h3>Quick Links</h3>
+<ul>
+<li><a href="#home">Home</a></li>
+<li><a href="#about">About</a></li>
+<li><a href="#skills">Skills</a></li>
+<li><a href="#education">Education</a></li>
+<li><a href="#projects">Projects</a></li>
+<li><a href="#work">Work Experience</a></li>
+</ul>
+</div>
+
+<!-- contact -->
+
+
+<div class="footerCol">
+<h3>Contact Info</h3>
+<p>📞 +91 82081 36064</p>
+<p>📧 sonararadhya@gmail.com</p>
+<p>📍 Pune, India</p>
+</div>
+
+</div>
+
+<div class="footerBottom">
+<p>Aradhya Sonar | Come Back Again 😊</p>
+</div>
+
+</div>
+
+
+<script src="script.js"></script>
+</body>
+</html>
