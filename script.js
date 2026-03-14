@@ -68,18 +68,6 @@ e.preventDefault();
 
 });
 
-setInterval(function(){
-
-const devtoolsOpen =
-window.outerWidth - window.innerWidth > 160 ||
-window.outerHeight - window.innerHeight > 160;
-
-if(devtoolsOpen){
-document.body.innerHTML="";
-}
-
-},1000);
-
 
 /* particles */
 /* =========================
