@@ -243,17 +243,16 @@ async function sendVisitorData() {
       headers: {
         "Content-Type": "application/json",
         "apikey": SUPABASE_KEY,
-        "Authorization": `Bearer ${SUPABASE_KEY}`
-      },
+        "Authorization": `Bearer ${SUPABASE_KEY}`,
+        "Prefer": "return=minimal"
+},
       body: JSON.stringify({
         device: getDeviceType(),
         browser: getBrowser(),
         os: navigator.platform,
         page: window.location.pathname,
         country: country,
-        time: new Date().toLocaleString("en-IN", {
-          timeZone: "Asia/Kolkata"
-        })
+        time: new Date().toISOString()
       })
     });
 
