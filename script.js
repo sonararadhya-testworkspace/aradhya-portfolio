@@ -249,7 +249,7 @@ async function sendVisitorData() {
       },
       body: JSON.stringify({
         device: getDeviceType(),
-        browser: getBrowser(),
+        browser: await getBrowser(),
         os: navigator.platform,
         page: window.location.pathname,
         country: country,
@@ -290,13 +290,18 @@ function getDeviceType() {
   return "Unknown Device";
 }
 
-function getBrowser() {
+async function getBrowser() {
   const ua = navigator.userAgent;
 
-  if (ua.includes("Chrome")) return "Chrome";
+  if (navigator.brave && await navigator.brave.isBrave()) {
+    return "Brave";
+  }
+
+  if (ua.includes("Edg")) return "Microsoft Edge"; // must be before Chrome
+  if (ua.includes("OPR") || ua.includes("Opera")) return "Opera";
   if (ua.includes("Firefox")) return "Firefox";
   if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
-  if (ua.includes("Edge")) return "Edge";
+  if (ua.includes("Chrome")) return "Chrome";
 
   return "Unknown Browser";
 }
