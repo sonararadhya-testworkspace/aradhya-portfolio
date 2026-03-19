@@ -228,6 +228,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 async function sendVisitorData() {
   try {
+
     let country = "Unknown";
 
     try {
@@ -245,25 +246,25 @@ async function sendVisitorData() {
         "apikey": SUPABASE_KEY,
         "Authorization": `Bearer ${SUPABASE_KEY}`,
         "Prefer": "return=minimal"
-},
+      },
       body: JSON.stringify({
         device: getDeviceType(),
         browser: getBrowser(),
         os: navigator.platform,
         page: window.location.pathname,
         country: country,
-        const now = new Date();
-        const createdAt = now.toISOString();
-        const istTime = new Date(createdAt).toLocaleString("en-IN", {
-           timeZone: "Asia/Kolkata"
-         });
+        created_at: new Date().toISOString() // ✅ ONLY THIS
       })
     });
 
-    console.log("Visitor stored ✅");
+    if(res.ok){
+      console.log("Visitor stored ✅");
+    }else{
+      console.error(await res.text());
+    }
 
   } catch (err) {
-    console.error("Supabase Error:", await res.text());
+    console.error("Supabase Error:", err);
   }
 }
 
