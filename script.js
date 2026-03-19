@@ -44,6 +44,7 @@ toggle.innerHTML=document.body.classList.contains("light")
 :'<i class="ri-sun-line"></i>';
 };
 
+/*
 document.addEventListener("contextmenu", e => {
 e.preventDefault();
 });
@@ -67,7 +68,7 @@ e.preventDefault();
 }
 
 });
-
+*/
 
 /* particles */
 /* =========================
@@ -216,6 +217,39 @@ link.classList.add("active");
 });
 
 });
+
+
+/* =========================
+   Supabase Visitor Tracking
+========================= */
+
+const SUPABASE_URL = "https://lqkzhyoqkjnumwqbiqyk.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxxa3poeW9xa2pudW13cWJpcXlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4OTYwMTQsImV4cCI6MjA4OTQ3MjAxNH0.ZUkFn9xAMMctNfNa8Lmv0XXAXAIxwRLxz1Nltf-Y-sk"; 
+
+async function sendVisitorData() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/visitors`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_KEY,
+        "Authorization": `Bearer ${SUPABASE_KEY}`
+      },
+      body: JSON.stringify({
+        device: navigator.platform,
+        browser: navigator.userAgent,
+        page: window.location.pathname,
+        country: "India",
+        time: new Date()
+      })
+    });
+
+    console.log("Visitor stored ✅", res.status);
+
+  } catch (err) {
+    console.error("Supabase Error:", err);
+  }
+}
 
 
 
