@@ -252,14 +252,14 @@ async function sendVisitorData() {
         os: navigator.platform,
         page: window.location.pathname,
         country: country,
-        time: new Date().toISOString()
+        created_at: new Date().toISOString()
       })
     });
 
-    console.log("Visitor stored ✅", res.status);
+    console.log("Visitor stored ✅");
 
   } catch (err) {
-    console.error("Supabase Error:", err);
+    console.error("Supabase Error:", await res.text());
   }
 }
 
