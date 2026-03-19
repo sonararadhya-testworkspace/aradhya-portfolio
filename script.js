@@ -251,7 +251,10 @@ async function sendVisitorData() {
   }
 }
 
-
+window.addEventListener("load", () => {
+  console.log("Page loaded 🚀");   // debug check
+  sendVisitorData();
+});
 
 /* ===========================
    GitHub Projects Loader
