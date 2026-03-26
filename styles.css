@@ -1110,6 +1110,7 @@ body {
       flex-direction: column;
       text-align: center;
       gap: 30px;
+      padding-top: 70px;
    }
 
    .profile {
@@ -1379,15 +1380,14 @@ body, a, button, .card, .projectCard, .flipScene, .resumeBtn, .socialBtn {
 .section h2 {
    font-size: 2.8rem;
    text-align: center;
-   margin-bottom: 50px;
+   margin: 0 auto 50px auto;
    background: linear-gradient(90deg, #a855f7, #ec4899, #6366f1, #a855f7);
    background-size: 300% auto;
    -webkit-background-clip: text;
+   background-clip: text;
    -webkit-text-fill-color: transparent;
-   display: inline-block;
-   position: relative;
-   left: 50%;
-   transform: translateX(-50%);
+   display: block;
+   width: fit-content;
    text-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
    animation: h2Gradient 6s linear infinite;
 }

@@ -60,30 +60,7 @@ type();
 ===================== */
 gsap.registerPlugin(ScrollTrigger);
 
-// Hacker Text Scramble for Headers
-const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+";
-document.querySelectorAll(".section h2").forEach(h2 => {
-   const originalText = h2.dataset.text || h2.innerText;
-   h2.dataset.text = originalText;
-   
-   ScrollTrigger.create({
-      trigger: h2,
-      start: "top 85%",
-      once: true,
-      onEnter: () => {
-         let iterations = 0;
-         const interval = setInterval(() => {
-            h2.innerText = originalText.split("")
-               .map((letter, index) => {
-                  if(index < iterations) return originalText[index];
-                  return letters[Math.floor(Math.random() * 38)];
-               }).join("");
-            if(iterations >= originalText.length) clearInterval(interval);
-            iterations += 1/3;
-         }, 30);
-      }
-   });
-});
+
 
 // Reveal Sections
 document.querySelectorAll(".section, .card, .eduCard, .workCard").forEach(el => {
@@ -174,9 +151,9 @@ document.addEventListener("mousemove", e => {
 
 // BACKGROUND SCENE
 const canvasBg = document.getElementById("particles");
-const rendererBg = new THREE.WebGLRenderer({ canvas: canvasBg, alpha: true, antialias: true });
+const rendererBg = new THREE.WebGLRenderer({ canvas: canvasBg, alpha: true, antialias: false });
 rendererBg.setSize(window.innerWidth, window.innerHeight);
-rendererBg.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+rendererBg.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 1.5));
 
 const sceneBg = new THREE.Scene();
 const cameraBg = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -197,7 +174,7 @@ const createCircleTexture = () => {
 // Stars as a Sphere
 const isMobile = window.innerWidth < 768;
 const starsGeometry = new THREE.BufferGeometry();
-const starsCount = isMobile ? 600 : 1500;
+const starsCount = isMobile ? 250 : 700;
 const posArray = new Float32Array(starsCount * 3);
 const origPosArray = new Float32Array(starsCount * 3);
 const radiusRadius = 250;
@@ -237,9 +214,9 @@ const sceneObj = new THREE.Scene();
 const cameraObj = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
 cameraObj.position.z = 10;
 
-const rendererObj = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+const rendererObj = new THREE.WebGLRenderer({ alpha: true, antialias: false });
 rendererObj.setSize(window.innerWidth, window.innerHeight);
-rendererObj.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+rendererObj.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 1.5));
 if(heroContainer) heroContainer.appendChild(rendererObj.domElement);
 
 const geometry = new THREE.IcosahedronGeometry(isMobile ? 1.6 : 2.5, 1);
@@ -356,9 +333,9 @@ if(skillsContainer) {
    const cameraSk = new THREE.PerspectiveCamera(45, skillsContainer.clientWidth / skillsContainer.clientHeight, 0.1, 100);
    cameraSk.position.z = 10;
    
-   const rendererSk = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+   const rendererSk = new THREE.WebGLRenderer({ alpha: true, antialias: false });
    rendererSk.setSize(skillsContainer.clientWidth, skillsContainer.clientHeight);
-   rendererSk.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+   rendererSk.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 1.5));
    skillsContainer.appendChild(rendererSk.domElement);
    
    // Advanced Gyroscope
