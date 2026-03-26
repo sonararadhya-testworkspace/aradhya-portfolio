@@ -1351,3 +1351,35 @@ body, a, button, .card, .projectCard, .flipScene, .resumeBtn, .socialBtn {
    0% { box-shadow: 0 0 10px var(--glow), inset 0 0 5px var(--glow); }
    100% { box-shadow: 0 0 25px var(--glow), inset 0 0 10px var(--glow); }
 }
+
+/* =====================
+   PHASE 5 ULTRA-PREMIUM
+===================== */
+.noise-overlay {
+   position: fixed;
+   top: 0; left: 0; right: 0; bottom: 0;
+   pointer-events: none;
+   z-index: 99999;
+   background: url('https://grainy-gradients.vercel.app/noise.svg');
+   opacity: 0.04;
+   mix-blend-mode: overlay;
+}
+
+::-webkit-scrollbar {
+   width: 8px;
+}
+::-webkit-scrollbar-track {
+   background: #020005;
+}
+::-webkit-scrollbar-thumb {
+   background: rgba(168, 85, 247, 0.5);
+   border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+   background: rgba(168, 85, 247, 0.8);
+}
+
+.magnetic-btn {
+   display: inline-flex;
+   transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}

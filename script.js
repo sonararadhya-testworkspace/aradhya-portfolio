@@ -1,4 +1,39 @@
 /* =====================
+   LENIS SMOOTH SCROLL
+===================== */
+if (typeof Lenis !== 'undefined') {
+   const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smooth: true
+   });
+   function raf(time) {
+      lenis.raf(time);
+      if(typeof ScrollTrigger !== 'undefined') ScrollTrigger.update();
+      requestAnimationFrame(raf);
+   }
+   requestAnimationFrame(raf);
+}
+
+/* =====================
+   MAGNETIC BUTTONS
+===================== */
+document.addEventListener("DOMContentLoaded", () => {
+   document.querySelectorAll('button, .footerBtn, .navLinks a, .magBtn').forEach(btn => {
+      btn.classList.add("magnetic-btn");
+      btn.addEventListener("mousemove", (e) => {
+         const rect = btn.getBoundingClientRect();
+         const x = e.clientX - rect.left - rect.width / 2;
+         const y = e.clientY - rect.top - rect.height / 2;
+         btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+      });
+      btn.addEventListener("mouseleave", () => {
+         btn.style.transform = `translate(0px, 0px)`;
+      });
+   });
+});
+
+/* =====================
    PRELOADER
 ===================== */
 window.addEventListener("load", () => {
@@ -41,6 +76,31 @@ type();
    GSAP SCROLL REVEAL & STATS
 ===================== */
 gsap.registerPlugin(ScrollTrigger);
+
+// Hacker Text Scramble for Headers
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+";
+document.querySelectorAll(".section h2").forEach(h2 => {
+   const originalText = h2.dataset.text || h2.innerText;
+   h2.dataset.text = originalText;
+   
+   ScrollTrigger.create({
+      trigger: h2,
+      start: "top 85%",
+      once: true,
+      onEnter: () => {
+         let iterations = 0;
+         const interval = setInterval(() => {
+            h2.innerText = originalText.split("")
+               .map((letter, index) => {
+                  if(index < iterations) return originalText[index];
+                  return letters[Math.floor(Math.random() * 38)];
+               }).join("");
+            if(iterations >= originalText.length) clearInterval(interval);
+            iterations += 1/3;
+         }, 30);
+      }
+   });
+});
 
 // Reveal Sections
 document.querySelectorAll(".section, .card, .eduCard, .workCard").forEach(el => {
