@@ -199,42 +199,21 @@ rendererObj.setSize(window.innerWidth, window.innerHeight);
 rendererObj.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 if(heroContainer) heroContainer.appendChild(rendererObj.domElement);
 
-// 3D MODERN LAPTOP
-const laptopGroup = new THREE.Group();
-
-// Laptop Base
-const baseGeom = new THREE.BoxGeometry(4.2, 0.15, 3);
-const baseMat = new THREE.MeshStandardMaterial({ color: 0x333344, roughness: 0.3, metalness: 0.8 });
-const base = new THREE.Mesh(baseGeom, baseMat);
-
-// Laptop Screen
-const screenGeom = new THREE.BoxGeometry(4.2, 2.6, 0.1);
-const screenMat = new THREE.MeshStandardMaterial({ color: 0x333344, roughness: 0.3, metalness: 0.8 });
-const screen = new THREE.Mesh(screenGeom, screenMat);
-screen.position.set(0, 1.3, -1.45);
-screen.rotation.x = -0.15; // open angle
-
-// Screen Display Glow
-const displayGeom = new THREE.PlaneGeometry(4.0, 2.4);
-const displayMat = new THREE.MeshBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.9 });
-const display = new THREE.Mesh(displayGeom, displayMat);
-display.position.set(0, 1.3, -1.39);
-display.rotation.x = -0.15;
-
-// Wireframe Accents
-const wireframeBase = new THREE.LineSegments(
-   new THREE.WireframeGeometry(baseGeom),
-   new THREE.LineBasicMaterial({ color: 0xb874fe, transparent: true, opacity: 0.4 })
+const geometry = new THREE.IcosahedronGeometry(isMobile ? 1.6 : 2.5, 1);
+const materialSolid = new THREE.MeshStandardMaterial({
+   color: 0x6366f1,
+   roughness: 0.2,
+   metalness: 0.8,
+   transparent: true,
+   opacity: 0.8
+});
+const object3D = new THREE.Mesh(geometry, materialSolid);
+const wireframe = new THREE.LineSegments(
+   new THREE.WireframeGeometry(geometry),
+   new THREE.LineBasicMaterial({ color: 0xb874fe, transparent: true, opacity: 0.6 })
 );
-base.add(wireframeBase);
-
-laptopGroup.add(base);
-laptopGroup.add(screen);
-laptopGroup.add(display);
-
-if(isMobile) laptopGroup.scale.set(0.6, 0.6, 0.6);
-laptopGroup.position.y = -0.5;
-sceneObj.add(laptopGroup);
+object3D.add(wireframe);
+sceneObj.add(object3D);
 
 // Lights for Hero Object
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -243,10 +222,10 @@ const pointLight = new THREE.PointLight(0xa855f7, 2, 50);
 pointLight.position.set(5, 5, 5);
 sceneObj.add(pointLight);
 
-// Setup GSAP scroll tied to Laptop Y translation (float up)
+// Setup GSAP scroll tied to 3D object rotation
 if (typeof gsap !== 'undefined') {
-   gsap.to(laptopGroup.position, {
-      y: 1.5,
+   gsap.to(object3D.rotation, {
+      y: Math.PI * 2,
       scrollTrigger: {
          trigger: ".hero",
          start: "top top",
@@ -270,9 +249,9 @@ function animate3D() {
    cameraBg.position.y += (targetMouse.y * 5 - cameraBg.position.y) * 0.05;
    cameraBg.lookAt(0, 0, 0);
 
-   // Mouse Repel Logic
-   const mw = targetMouse.x * 50; 
-   const mh = targetMouse.y * 50;
+   // Mouse Repel Logic mapped to full frustum approx width
+   const mw = targetMouse.x * 250; 
+   const mh = targetMouse.y * 250;
    const positions = starsGeometry.attributes.position.array;
    for(let i=0; i<starsCount; i++) {
         const i3 = i * 3;
@@ -281,9 +260,9 @@ function animate3D() {
         const dx = ox - mw;
         const dy = oy - mh;
         const distSq = dx*dx + dy*dy;
-        if(distSq < 400 && distSq > 0.1) {
+        if(distSq < 15000 && distSq > 0.1) {
             const dist = Math.sqrt(distSq);
-            const force = (20 - dist) * 0.5;
+            const force = (120 - dist) * 0.15;
             positions[i3] = ox + (dx/dist) * force;
             positions[i3+1] = oy + (dy/dist) * force;
         } else {
@@ -293,10 +272,10 @@ function animate3D() {
    }
    starsGeometry.attributes.position.needsUpdate = true;
 
-   // Animate centerpiece Laptop Interactive 360 Full Rotation
-   laptopGroup.rotation.y += (targetMouse.x * Math.PI - laptopGroup.rotation.y) * 0.05;
-   laptopGroup.rotation.x += ((0.2 + targetMouse.y * 0.5) - laptopGroup.rotation.x) * 0.05;
-   laptopGroup.rotation.z = Math.sin(elapsedTime) * 0.05; // hover breathing
+   // Animate centerpiece Interactive Sphere
+   object3D.rotation.y += (targetMouse.x * 4 - object3D.rotation.y) * 0.1;
+   object3D.rotation.x += (targetMouse.y * 4 - object3D.rotation.x) * 0.1;
+   object3D.scale.setScalar(1 + Math.abs(targetMouse.x) * 0.3 + Math.abs(targetMouse.y) * 0.3);
 
    rendererBg.render(sceneBg, cameraBg);
    if(heroContainer) rendererObj.render(sceneObj, cameraObj);
@@ -386,6 +365,7 @@ if(skillsContainer && !isMobile) {
 ===================== */
 const cursorDot = document.querySelector(".cursor-dot");
 const cursorOutline = document.querySelector(".cursor-outline");
+const cursorGlow = document.querySelector(".cursor-glow");
 
 if(cursorDot && cursorOutline && !isMobile) {
    window.addEventListener("mousemove", (e) => {
@@ -396,6 +376,13 @@ if(cursorDot && cursorOutline && !isMobile) {
          left: e.clientX + "px",
          top: e.clientY + "px"
       }, { duration: 500, fill: "forwards" });
+
+      if (cursorGlow) {
+         cursorGlow.animate({
+            left: e.clientX + "px",
+            top: e.clientY + "px"
+         }, { duration: 1200, fill: "forwards", easing: "ease-out" });
+      }
    });
 
    document.body.addEventListener("mouseover", e => {
@@ -435,6 +422,76 @@ function apply3DTilt(selector) {
    });
 }
 apply3DTilt(".card, .eduCard, .workCard");
+
+/* =====================
+   MEDIUM NEON LAPTOP
+===================== */
+const laptopContainer = document.getElementById("laptop-3d-container");
+if(laptopContainer && !isMobile) {
+   const sceneLap = new THREE.Scene();
+   const cameraLap = new THREE.PerspectiveCamera(45, laptopContainer.clientWidth / laptopContainer.clientHeight, 0.1, 100);
+   cameraLap.position.z = 10;
+   
+   const rendererLap = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+   rendererLap.setSize(laptopContainer.clientWidth, laptopContainer.clientHeight);
+   rendererLap.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+   laptopContainer.appendChild(rendererLap.domElement);
+
+   const laptopGrp = new THREE.Group();
+
+   // Laptop Base
+   const baseGeom = new THREE.BoxGeometry(4.2, 0.15, 3);
+   const baseMat = new THREE.MeshStandardMaterial({ color: 0x333344, roughness: 0.3, metalness: 0.8 });
+   const base = new THREE.Mesh(baseGeom, baseMat);
+
+   // Laptop Screen
+   const screenGeom = new THREE.BoxGeometry(4.2, 2.6, 0.1);
+   const screenMat = new THREE.MeshStandardMaterial({ color: 0x333344, roughness: 0.3, metalness: 0.8 });
+   const screen = new THREE.Mesh(screenGeom, screenMat);
+   screen.position.set(0, 1.3, -1.45);
+   screen.rotation.x = -0.15; // open angle
+
+   // Glow Screen Display
+   const displayGeom = new THREE.PlaneGeometry(4.0, 2.4);
+   const displayMat = new THREE.MeshBasicMaterial({ color: 0xb874fe, transparent: true, opacity: 0.9, side: THREE.DoubleSide });
+   const display = new THREE.Mesh(displayGeom, displayMat);
+   display.position.set(0, 1.3, -1.39);
+   display.rotation.x = -0.15;
+
+   // Wireframe
+   base.add(new THREE.LineSegments(
+      new THREE.WireframeGeometry(baseGeom),
+      new THREE.LineBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.6 })
+   ));
+
+   laptopGrp.add(base);
+   laptopGrp.add(screen);
+   laptopGrp.add(display);
+   
+   laptopGrp.scale.set(0.8, 0.8, 0.8);
+   laptopGrp.position.y = -0.5;
+   sceneLap.add(laptopGrp);
+
+   const lightLap = new THREE.PointLight(0xa855f7, 2, 50);
+   lightLap.position.set(5, 5, 5);
+   sceneLap.add(lightLap);
+   sceneLap.add(new THREE.AmbientLight(0xffffff, 0.5));
+
+   function animateLap() {
+      requestAnimationFrame(animateLap);
+      laptopGrp.rotation.y += (targetMouse.x * Math.PI - laptopGrp.rotation.y) * 0.05;
+      laptopGrp.rotation.x += ((0.2 + targetMouse.y * 0.5) - laptopGrp.rotation.x) * 0.05;
+      rendererLap.render(sceneLap, cameraLap);
+   }
+   animateLap();
+
+   window.addEventListener("resize", () => {
+      if(laptopContainer.clientWidth === 0) return;
+      cameraLap.aspect = laptopContainer.clientWidth / laptopContainer.clientHeight;
+      cameraLap.updateProjectionMatrix();
+      rendererLap.setSize(laptopContainer.clientWidth, laptopContainer.clientHeight);
+   });
+}
 
 /* =====================
    NAV ACTIVE LINK ON SCROLL
