@@ -15,9 +15,10 @@
   </script>
   <link rel="icon" type="image/png" sizes="32x32" href="Images/profile.png">
   <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css">
 </head>
 
 <body>
@@ -78,7 +79,7 @@
       <div class="profileWrapper">
         <div class="profileLoader"></div>
         <div class="profile">
-          <img src="Images/profile1.jpg">
+          <img src="Images/profile1.jpg" alt="Profile" onload="document.querySelector('.profileLoader').style.display='none'">
         </div>
       </div>
 
@@ -330,7 +331,7 @@
     <div class="eduRow">
 
       <div class="eduCard">
-        <img src="Images/PESMCOE.jpg">
+        <img src="Images/PESMCOE.jpg" alt="PESMCOE" loading="lazy">
         <div class="eduText">
           <h3>Bachelor of Engineering - SPPU</h3>
           <h3>Information Technology</h3>
@@ -340,7 +341,7 @@
       </div>
 
       <div class="eduCard">
-        <img src="Images/GovernmentPolytechnicAw.jpg">
+        <img src="Images/GovernmentPolytechnicAw.jpg" alt="Government Polytechnic" loading="lazy">
         <div class="eduText">
           <h3>Diploma - MSBTE</h3>
           <h3>Information Technology</h3>
@@ -350,7 +351,7 @@
       </div>
 
       <div class="eduCard">
-        <img src="Images/RadiantInternational.jpg">
+        <img src="Images/RadiantInternational.jpg" alt="Radiant International" loading="lazy">
         <div class="eduText">
           <h3>Secondary School Certificate - CBSE</h3>
           <p>Radiant International School, Surat Gujarat</p>
@@ -402,7 +403,6 @@
           </ul>
         </div>
       </div>
-    </div>
     </div>
   </section>
 
