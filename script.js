@@ -255,6 +255,58 @@ new IntersectionObserver(e => heroVisible = e[0].isIntersecting)
 const skillsSectionObs = new IntersectionObserver(e => skillsVisible = e[0].isIntersecting);
 skillsSectionObs.observe(document.getElementById('skills'));
 
+let heroSpinning = false;
+let skillsSpinning = false;
+const globalRaycaster = new THREE.Raycaster();
+
+window.addEventListener("click", (e) => {
+   const nx = (e.clientX / window.innerWidth) * 2 - 1;
+   const ny = -(e.clientY / window.innerHeight) * 2 + 1;
+   
+   if (heroVisible && typeof object3D !== 'undefined') {
+      globalRaycaster.setFromCamera(new THREE.Vector2(nx, ny), cameraObj);
+      const intersects = globalRaycaster.intersectObject(object3D, true);
+      if (intersects.length > 0 && !heroSpinning) {
+         heroSpinning = true;
+         gsap.to(object3D.rotation, {
+            x: object3D.rotation.x + Math.PI,
+            y: object3D.rotation.y + Math.PI,
+            duration: 1.2,
+            ease: "power2.out",
+            onComplete: () => heroSpinning = false
+         });
+         gsap.to(object3D.scale, {
+            x: isMobile ? 1.4 : 1.3, y: isMobile ? 1.4 : 1.3, z: isMobile ? 1.4 : 1.3, duration: 0.3, yoyo: true, repeat: 1
+         });
+      }
+   }
+   
+   if (skillsVisible && typeof window.skillsRenderer !== 'undefined' && window.skillsCamera) {
+      const rect = document.getElementById("skills-3d-container").getBoundingClientRect();
+      if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+         const stX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+         const stY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+         globalRaycaster.setFromCamera(new THREE.Vector2(stX, stY), window.skillsCamera);
+         const sIntersects = globalRaycaster.intersectObject(window.skillsRenderer.gyroGroup, true);
+         if (sIntersects.length > 0 && !skillsSpinning) {
+            skillsSpinning = true;
+            const grp = window.skillsRenderer.gyroGroup;
+            gsap.to(grp.rotation, {
+               x: grp.rotation.x + Math.PI,
+               y: grp.rotation.y + Math.PI,
+               duration: 1.2,
+               ease: "power2.out",
+               onComplete: () => skillsSpinning = false
+            });
+            const baseScale = isMobile ? 0.6 : 1;
+            gsap.to(grp.scale, {
+               x: baseScale * 1.4, y: baseScale * 1.4, z: baseScale * 1.4, duration: 0.3, yoyo: true, repeat: 1
+            });
+         }
+      }
+   }
+});
+
 let rafId;
 
 function masterLoop() {
@@ -296,9 +348,11 @@ function masterLoop() {
    rendererBg.render(sceneBg, cameraBg);
 
    if (heroVisible && typeof heroContainer !== "undefined" && heroContainer) {
-      object3D.rotation.y += (targetMouse.x * 4 - object3D.rotation.y) * 0.1;
-      object3D.rotation.x += (targetMouse.y * 4 - object3D.rotation.x) * 0.1;
-      object3D.scale.setScalar(1 + Math.abs(targetMouse.x) * 0.3 + Math.abs(targetMouse.y) * 0.3);
+      if (!heroSpinning) {
+         object3D.rotation.y += (targetMouse.x * 4 - object3D.rotation.y) * 0.1;
+         object3D.rotation.x += (targetMouse.y * 4 - object3D.rotation.x) * 0.1;
+         object3D.scale.setScalar(1 + Math.abs(targetMouse.x) * 0.3 + Math.abs(targetMouse.y) * 0.3);
+      }
       rendererObj.render(sceneObj, cameraObj);
    }
 
@@ -609,3 +663,39 @@ ${repo.language || ""}
    }
 }
 loadProjects();
+
+
+/* =====================
+   UNIVERSAL TEXT HOVER REACT
+===================== */
+document.addEventListener("DOMContentLoaded", () => {
+   if (isMobile) return;
+   const texts = document.querySelectorAll('h1, h2, h3, p, li, span');
+   texts.forEach(el => {
+      // Don't apply to icons, buttons, or extremely large containers
+      if(el.closest('button') || el.closest('a') || el.classList.contains('devicon') || el.classList.contains('ri')) return;
+      if(el.children.length > 1) return; // Only process leaf elements mostly
+      
+      el.classList.add('text-react');
+      
+      let rect, isInside;
+      el.addEventListener('mouseenter', (e) => {
+         isInside = true;
+         rect = el.getBoundingClientRect();
+      });
+      el.addEventListener('mousemove', (e) => {
+         if(!isInside) return;
+         const x = e.clientX - rect.left - rect.width / 2;
+         const y = e.clientY - rect.top - rect.height / 2;
+         
+         // Subtle shift & tiny scale
+         el.style.transform = `translate(${x * 0.08}px, ${y * 0.08}px) scale(1.02)`;
+         el.style.textShadow = `${-x * 0.15}px ${-y * 0.15}px 10px var(--cursor-glow)`;
+      });
+      el.addEventListener('mouseleave', () => {
+         isInside = false;
+         el.style.transform = 'translate(0px, 0px) scale(1)';
+         el.style.textShadow = 'none';
+      });
+   });
+});
