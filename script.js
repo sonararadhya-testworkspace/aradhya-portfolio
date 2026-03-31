@@ -139,6 +139,7 @@ document.addEventListener("mousemove", e => {
 });
 
 // BACKGROUND SCENE
+const isMobile = window.innerWidth < 768;
 const canvasBg = document.getElementById("particles");
 const rendererBg = new THREE.WebGLRenderer({ canvas: canvasBg, alpha: true, antialias: false });
 rendererBg.setSize(window.innerWidth, window.innerHeight);
@@ -161,7 +162,6 @@ const createCircleTexture = () => {
 };
 
 // Stars as a Sphere
-const isMobile = window.innerWidth < 768;
 const starsGeometry = new THREE.BufferGeometry();
 const starsCount = isMobile ? 300 : 800;
 const posArray = new Float32Array(starsCount * 3);
