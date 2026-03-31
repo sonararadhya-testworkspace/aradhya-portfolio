@@ -1236,6 +1236,7 @@ body, a, button, .card, .projectCard, .flipScene, .resumeBtn, .socialBtn {
 
 .profileLoader {
    position: absolute;
+   pointer-events: none;
    width: 100%;
    height: 100%;
    border-radius: 50%;
@@ -1397,4 +1398,76 @@ body, a, button, .card, .projectCard, .flipScene, .resumeBtn, .socialBtn {
 @keyframes h2Gradient {
    0% { background-position: 0% center; }
    100% { background-position: 300% center; }
+}
+
+/* =====================
+   LIQUID CONTACT BACKDROP
+===================== */
+#contact {
+   position: relative;
+   overflow: hidden;
+}
+
+.liquid-bg {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   width: 150%;
+   height: 150%;
+   transform: translate(-50%, -50%);
+   z-index: 0;
+   pointer-events: none;
+   filter: blur(40px);
+   opacity: 0.15;
+}
+
+.liquid-blob {
+   position: absolute;
+   border-radius: 50%;
+   background: linear-gradient(135deg, #a855f7, #6366f1);
+   animation: fluidMorph 12s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.liquid-blob:nth-child(1) {
+   width: 400px; height: 400px;
+   top: 10%; left: 10%;
+   background: linear-gradient(135deg, #ec4899, #6366f1);
+   animation-delay: 0s;
+}
+
+.liquid-blob:nth-child(2) {
+   width: 500px; height: 500px;
+   bottom: 10%; right: 10%;
+   background: linear-gradient(135deg, #a855f7, #3b82f6);
+   animation-delay: -3s;
+   animation-duration: 15s;
+}
+
+.liquid-blob:nth-child(3) {
+   width: 300px; height: 300px;
+   top: 50%; left: 50%;
+   background: linear-gradient(135deg, #8b5cf6, #d946ef);
+   animation-delay: -6s;
+   animation-duration: 10s;
+}
+
+@keyframes fluidMorph {
+   0% { transform: scale(1) translate(0, 0) rotate(0deg); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+   33% { transform: scale(1.1) translate(50px, -50px) rotate(45deg); border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+   66% { transform: scale(0.9) translate(-30px, 30px) rotate(90deg); border-radius: 50% 50% 60% 40% / 40% 60% 50% 50%; }
+   100% { transform: scale(1.2) translate(0, 50px) rotate(135deg); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+}
+
+.contactForm {
+   position: relative;
+   z-index: 2;
+}
+
+/* =====================
+   UNIVERSAL TEXT MAGNETIC
+===================== */
+.text-react {
+   display: inline-block;
+   transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), text-shadow 0.3s ease;
+   transform-origin: center center;
 }
