@@ -108,9 +108,7 @@ if (statsStrip) {
    SCROLL BUTTON
 ===================== */
 const btn = document.getElementById("topBtn");
-window.addEventListener("scroll", () => {
-   btn.style.display = window.scrollY > 300 ? "flex" : "none";
-});
+
 btn.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
 /* =====================
@@ -124,34 +122,25 @@ toggle.onclick = () => {
       : '<i class="ri-sun-line"></i>';
 };
 
-/* =====================
-   DISABLE DEVTOOLS
-===================== */
-document.addEventListener("contextmenu", e => {
-   e.preventDefault();
-});
-document.addEventListener("keydown", function (e) {
-   if (e.key === "F12") { e.preventDefault(); }
-   if (e.ctrlKey && e.shiftKey && e.key === "I") { e.preventDefault(); }
-   if (e.ctrlKey && e.shiftKey && e.key === "J") { e.preventDefault(); }
-   if (e.ctrlKey && e.key === "U") { e.preventDefault(); }
-});
+
 
 /* =====================
    THREE.JS COSMIC BACKGROUND & HERO 3D
 ===================== */
 let mouse = { x: 0, y: 0 };
 let targetMouse = { x: 0, y: 0 };
+let mouseDidMove = false;
 document.addEventListener("mousemove", e => {
    mouse.x = e.clientX;
    mouse.y = e.clientY;
    targetMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
    targetMouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+   mouseDidMove = true;
 });
 
 // BACKGROUND SCENE
 const canvasBg = document.getElementById("particles");
-const rendererBg = new THREE.WebGLRenderer({ canvas: canvasBg, alpha: true, antialias: true });
+const rendererBg = new THREE.WebGLRenderer({ canvas: canvasBg, alpha: true, antialias: false });
 rendererBg.setSize(window.innerWidth, window.innerHeight);
 rendererBg.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -256,51 +245,82 @@ if (typeof gsap !== 'undefined') {
 }
 
 const clock = new THREE.Clock();
-function animate3D() {
-   requestAnimationFrame(animate3D);
+let heroVisible = true;
+let skillsVisible = false;
+let skillsInitialized = false;
+
+new IntersectionObserver(e => heroVisible = e[0].isIntersecting)
+  .observe(document.querySelector('.hero'));
+
+const skillsSectionObs = new IntersectionObserver(e => skillsVisible = e[0].isIntersecting);
+skillsSectionObs.observe(document.getElementById('skills'));
+
+let rafId;
+
+function masterLoop() {
+   rafId = requestAnimationFrame(masterLoop);
    const elapsedTime = clock.getElapsedTime();
 
-   // Animate background stars
    starMesh.rotation.y = elapsedTime * 0.03;
    starMesh.rotation.x = elapsedTime * 0.01;
    
-   // Parallax background based on mouse
    cameraBg.position.x += (targetMouse.x * 5 - cameraBg.position.x) * 0.05;
    cameraBg.position.y += (targetMouse.y * 5 - cameraBg.position.y) * 0.05;
    cameraBg.lookAt(0, 0, 0);
 
-   // Mouse Repel Logic mapped to full frustum approx width
-   const mw = targetMouse.x * 250; 
-   const mh = targetMouse.y * 250;
-   const positions = starsGeometry.attributes.position.array;
-   for(let i=0; i<starsCount; i++) {
-        const i3 = i * 3;
-        const ox = origPosArray[i3];
-        const oy = origPosArray[i3+1];
-        const dx = ox - mw;
-        const dy = oy - mh;
-        const distSq = dx*dx + dy*dy;
-        if(distSq < 15000 && distSq > 0.1) {
-            const dist = Math.sqrt(distSq);
-            const force = (120 - dist) * 0.15;
-            positions[i3] = ox + (dx/dist) * force;
-            positions[i3+1] = oy + (dy/dist) * force;
-        } else {
-            positions[i3] += (ox - positions[i3]) * 0.1;
-            positions[i3+1] += (oy - positions[i3+1]) * 0.1;
-        }
+   if (mouseDidMove) {
+      const mw = targetMouse.x * 250; 
+      const mh = targetMouse.y * 250;
+      const positions = starsGeometry.attributes.position.array;
+      for(let i=0; i<starsCount; i++) {
+           const i3 = i * 3;
+           const ox = origPosArray[i3];
+           const oy = origPosArray[i3+1];
+           const dx = ox - mw;
+           const dy = oy - mh;
+           const distSq = dx*dx + dy*dy;
+           if(distSq < 15000 && distSq > 0.1) {
+               const dist = Math.sqrt(distSq);
+               const force = (120 - dist) * 0.15;
+               positions[i3] = ox + (dx/dist) * force;
+               positions[i3+1] = oy + (dy/dist) * force;
+           } else {
+               positions[i3] += (ox - positions[i3]) * 0.1;
+               positions[i3+1] += (oy - positions[i3+1]) * 0.1;
+           }
+      }
+      starsGeometry.attributes.position.needsUpdate = true;
+      mouseDidMove = false;
    }
-   starsGeometry.attributes.position.needsUpdate = true;
-
-   // Animate centerpiece Interactive Sphere
-   object3D.rotation.y += (targetMouse.x * 4 - object3D.rotation.y) * 0.1;
-   object3D.rotation.x += (targetMouse.y * 4 - object3D.rotation.x) * 0.1;
-   object3D.scale.setScalar(1 + Math.abs(targetMouse.x) * 0.3 + Math.abs(targetMouse.y) * 0.3);
 
    rendererBg.render(sceneBg, cameraBg);
-   if(heroContainer) rendererObj.render(sceneObj, cameraObj);
+
+   if (heroVisible && typeof heroContainer !== "undefined" && heroContainer) {
+      object3D.rotation.y += (targetMouse.x * 4 - object3D.rotation.y) * 0.1;
+      object3D.rotation.x += (targetMouse.y * 4 - object3D.rotation.x) * 0.1;
+      object3D.scale.setScalar(1 + Math.abs(targetMouse.x) * 0.3 + Math.abs(targetMouse.y) * 0.3);
+      rendererObj.render(sceneObj, cameraObj);
+   }
+
+   if (skillsVisible && typeof window.skillsRenderer !== 'undefined' && window.skillsScene && window.skillsCamera) {
+      const { ring1, ring2, ring3, core, gyroGroup, rendererSk, sceneSk, cameraSk } = window.skillsRenderer;
+      ring1.rotation.x += 0.01; ring1.rotation.y += 0.02;
+      ring2.rotation.x -= 0.02; ring2.rotation.y += 0.01;
+      ring3.rotation.z += 0.03; core.rotation.y -= 0.05;
+      
+      gyroGroup.position.x += (targetMouse.x * 1.5 - gyroGroup.position.x) * 0.1;
+      gyroGroup.position.y += (targetMouse.y * 1.5 - gyroGroup.position.y) * 0.1;
+      rendererSk.render(sceneSk, cameraSk);
+   }
 }
-animate3D();
+
+masterLoop();
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) cancelAnimationFrame(rafId);
+  else masterLoop();
+});
+
 
 window.addEventListener("resize", () => {
    cameraBg.aspect = window.innerWidth / window.innerHeight;
@@ -328,7 +348,8 @@ profile.addEventListener("mouseleave", () => profile.style.transform = "rotateX(
    SKILLS 3D CENTERPIECE
 ===================== */
 const skillsContainer = document.getElementById("skills-3d-container");
-if(skillsContainer) {
+function initSkillsScene() {
+   if(!skillsContainer) return;
    const sceneSk = new THREE.Scene();
    const cameraSk = new THREE.PerspectiveCamera(45, skillsContainer.clientWidth / skillsContainer.clientHeight, 0.1, 100);
    cameraSk.position.z = 10;
@@ -338,7 +359,6 @@ if(skillsContainer) {
    rendererSk.setPixelRatio(Math.min(window.devicePixelRatio, 2));
    skillsContainer.appendChild(rendererSk.domElement);
    
-   // Advanced Gyroscope
    const gyroGroup = new THREE.Group();
    const mat = new THREE.MeshStandardMaterial({ color: 0xec4899, wireframe: true, transparent: true, opacity: 0.8 });
    
@@ -362,17 +382,27 @@ if(skillsContainer) {
    const light2 = new THREE.PointLight(0xa855f7, 2, 50);
    light2.position.set(5, 5, 5);
    sceneSk.add(light2);
-   
-   function animateSk() {
-      requestAnimationFrame(animateSk);
-      ring1.rotation.x += 0.01; ring1.rotation.y += 0.02;
-      ring2.rotation.x -= 0.02; ring2.rotation.y += 0.01;
-      ring3.rotation.z += 0.03; core.rotation.y -= 0.05;
-      
-      gyroGroup.position.x += (targetMouse.x * 1.5 - gyroGroup.position.x) * 0.1;
-      gyroGroup.position.y += (targetMouse.y * 1.5 - gyroGroup.position.y) * 0.1;
-      rendererSk.render(sceneSk, cameraSk);
-   }
+
+   window.skillsRenderer = { ring1, ring2, ring3, core, gyroGroup, rendererSk, sceneSk, cameraSk };
+   window.skillsScene = sceneSk;
+   window.skillsCamera = cameraSk;
+
+   window.addEventListener("resize", () => {
+      cameraSk.aspect = skillsContainer.clientWidth / skillsContainer.clientHeight;
+      cameraSk.updateProjectionMatrix();
+      rendererSk.setSize(skillsContainer.clientWidth, skillsContainer.clientHeight);
+   });
+}
+
+const lazySkillsObserver = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting && !skillsInitialized) {
+    initSkillsScene();
+    skillsInitialized = true;
+    lazySkillsObserver.disconnect();
+  }
+}, { threshold: 0.1 });
+if(document.getElementById('skills')) lazySkillsObserver.observe(document.getElementById('skills'));
+
    animateSk();
 
    window.addEventListener("resize", () => {
@@ -388,23 +418,20 @@ if(skillsContainer) {
 const cursorDot = document.querySelector(".cursor-dot");
 const cursorOutline = document.querySelector(".cursor-outline");
 const cursorGlow = document.querySelector(".cursor-glow");
+const spotlight = document.getElementById("spotlight");
 
 if(cursorDot && cursorOutline && !isMobile) {
    window.addEventListener("mousemove", (e) => {
       cursorDot.style.left = e.clientX + "px";
       cursorDot.style.top = e.clientY + "px";
       
-      cursorOutline.animate({
-         left: e.clientX + "px",
-         top: e.clientY + "px"
-      }, { duration: 500, fill: "forwards" });
-
-      if (cursorGlow) {
-         cursorGlow.animate({
-            left: e.clientX + "px",
-            top: e.clientY + "px"
-         }, { duration: 1200, fill: "forwards", easing: "ease-out" });
+      if(spotlight) {
+         spotlight.style.left = e.clientX + "px";
+         spotlight.style.top = e.clientY + "px";
       }
+
+      document.documentElement.style.setProperty('--cx', e.clientX + 'px');
+      document.documentElement.style.setProperty('--cy', e.clientY + 'px');
    });
 
    document.body.addEventListener("mouseover", e => {
@@ -434,8 +461,8 @@ function apply3DTilt(selector) {
          const r = card.getBoundingClientRect();
          const x = e.clientX - r.left;
          const y = e.clientY - r.top;
-         const rotateX = -((y - r.height / 2) / r.height) * 180;
-         const rotateY = ((x - r.width / 2) / r.width) * 180;
+         const rotateX = -((y - r.height / 2) / r.height) * 15;
+         const rotateY = ((x - r.width / 2) / r.width) * 15;
          card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.1, 1.1, 1.1)`;
       });
       card.addEventListener("mouseleave", () => {
@@ -451,19 +478,27 @@ apply3DTilt(".card, .eduCard, .workCard");
 const sections = document.querySelectorAll("section");
 const navLinks = document.querySelectorAll(".navLinks a");
 
+let scrollTicking = false;
 window.addEventListener("scroll", () => {
-   let current = "";
-   sections.forEach(section => {
-      const sectionTop = section.offsetTop - 150;
-      if (scrollY >= sectionTop) {
-         current = section.getAttribute("id");
-      }
-   });
-   navLinks.forEach(link => {
-      link.classList.remove("active");
-      if (link.getAttribute("href") === "#" + current) {
-         link.classList.add("active");
-      }
+   if (scrollTicking) return;
+   scrollTicking = true;
+   requestAnimationFrame(() => {
+      if(btn) btn.style.display = window.scrollY > 300 ? "flex" : "none";
+      
+      let current = "";
+      sections.forEach(section => {
+         const sectionTop = section.offsetTop - 150;
+         if (scrollY >= sectionTop) {
+            current = section.getAttribute("id");
+         }
+      });
+      navLinks.forEach(link => {
+         link.classList.remove("active");
+         if (link.getAttribute("href") === "#" + current) {
+            link.classList.add("active");
+         }
+      });
+      scrollTicking = false;
    });
 });
 
@@ -493,7 +528,7 @@ async function sendVisitorData() {
          body: JSON.stringify({
             device: getDeviceType(),
             browser: await getBrowser(),
-            os: navigator.platform,
+            os: navigator.userAgentData?.platform || navigator.platform || "Unknown",
             page: window.location.pathname,
             country: country,
             created_at: new Date().toISOString()
