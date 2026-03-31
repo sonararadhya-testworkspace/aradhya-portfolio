@@ -29,7 +29,7 @@ section {
 
 body {
    margin: 0;
-   font-family: Poppins;
+   font-family: 'Poppins', sans-serif;
    background: var(--bg);
    color: var(--text);
    overflow-x: hidden;
@@ -546,8 +546,7 @@ body {
 }
 
 .flipFront {
-   background: var(--card);
-   backdrop-filter: blur(12px);
+   background: rgba(15, 20, 35, 0.85);
    border: 1px solid var(--glass-border);
    transition: border-color .3s, box-shadow .3s;
 }
@@ -574,8 +573,7 @@ body {
 }
 
 .flipBack {
-   background: linear-gradient(135deg, rgba(168, 85, 247, .18), rgba(99, 102, 241, .18));
-   backdrop-filter: blur(12px);
+   background: linear-gradient(135deg, rgba(168, 85, 247, 0.85), rgba(99, 102, 241, 0.85));
    border: 1px solid rgba(168, 85, 247, .4);
    transform: rotateY(180deg);
 }
@@ -875,7 +873,7 @@ body {
    border: 1px solid rgba(168, 85, 247, .2);
    background: var(--card);
    color: var(--text);
-   font-family: Poppins;
+   font-family: 'Poppins', sans-serif;
    transition: border-color .3s, box-shadow .3s;
 }
 
@@ -895,7 +893,7 @@ body {
    font-weight: 600;
    cursor: pointer;
    transition: .3s;
-   font-family: Poppins;
+   font-family: 'Poppins', sans-serif;
    font-size: 15px;
    position: relative;
    overflow: hidden;
@@ -1174,17 +1172,21 @@ body {
 
    .timeline::before {
       left: 20px;
+      transform: none;
    }
    .timeline-item {
       justify-content: flex-start;
       padding-right: 0;
       padding-left: 50px;
+      width: 100%;
+      box-sizing: border-box;
    }
    .timeline-item:nth-child(even) {
       padding-left: 50px;
    }
    .timeline-dot {
-      left: 20px;
+      left: 12px;
+      transform: none;
    }
    .workCard {
       width: 100%;
@@ -1213,14 +1215,14 @@ body, a, button, .card, .projectCard, .flipScene, .resumeBtn, .socialBtn {
 
 .cursor-outline {
    position: fixed;
-   top: 0; left: 0;
+   top: var(--cy, -100px); left: var(--cx, -100px);
    width: 40px; height: 40px;
    border: 1px solid var(--accent);
    border-radius: 50%;
    pointer-events: none;
    z-index: 9998;
    transform: translate(-50%, -50%);
-   transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
+   transition: left 0.5s ease, top 0.5s ease, width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
 }
 
 .profileWrapper {
@@ -1323,7 +1325,7 @@ body, a, button, .card, .projectCard, .flipScene, .resumeBtn, .socialBtn {
 ===================== */
 .cursor-glow {
    position: fixed;
-   top: 0; left: 0;
+   top: var(--cy, -100px); left: var(--cx, -100px);
    width: 400px; height: 400px;
    background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0) 70%);
    border-radius: 50%;
@@ -1331,7 +1333,7 @@ body, a, button, .card, .projectCard, .flipScene, .resumeBtn, .socialBtn {
    z-index: 9997;
    mix-blend-mode: screen;
    transform: translate(-50%, -50%);
-   /* JS will animate left/top */
+   transition: left 1.2s ease-out, top 1.2s ease-out;
 }
 
 /* Theme Button Glow Update */
