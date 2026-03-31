@@ -651,13 +651,21 @@ async function loadProjects() {
          .slice(0, 8)
          .forEach(repo => {
             const card = document.createElement("div");
-            card.className = "projectCard";
+            
+            // Dynamic Categorization based on Language Stack
+            let catClass = "";
+            const lang = repo.language || "";
+            if (['JavaScript', 'HTML', 'CSS', 'TypeScript'].includes(lang)) catClass = "webdev";
+            else if (['Python', 'Jupyter Notebook'].includes(lang)) catClass = "aiml";
+            else catClass = "webdev"; // Fallback
+            
+            card.className = `projectCard ${catClass}`;
             card.innerHTML = `
 <img class="projectImage" src="https://opengraph.githubassets.com/1/${githubUser}/${repo.name}" onerror="this.src='Images/profile1.jpg'" alt="Preview" loading="lazy">
 <h3>${repo.name}</h3>
 <p>${repo.description || "Project repository"}</p>
 <div class="tech">
-${repo.language || ""}
+${lang}
 ⭐ ${repo.stargazers_count}
 </div>`;
             card.onclick = () => window.open(repo.html_url, "_blank");
@@ -674,6 +682,24 @@ ${repo.language || ""}
 
          // Apply universal tilt to newly injected project cards
          setTimeout(() => apply3DTilt(".projectCard"), 100);
+
+         // Initialize Isotope Physics Filtering
+         setTimeout(() => {
+            if (window.Isotope) {
+               const iso = new Isotope('#projectsGrid', {
+                  itemSelector: '.projectCard',
+                  layoutMode: 'fitRows'
+               });
+               document.querySelectorAll('.filterBtn').forEach(btn => {
+                  btn.addEventListener('click', e => {
+                     document.querySelectorAll('.filterBtn').forEach(b => b.classList.remove('active'));
+                     e.target.classList.add('active');
+                     iso.arrange({ filter: e.target.getAttribute('data-filter') });
+                  });
+               });
+            }
+         }, 300);
+
    } catch (err) {
       projectsGrid.innerHTML = "<p>Failed to load projects</p>";
    }
