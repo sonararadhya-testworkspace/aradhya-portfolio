@@ -593,52 +593,80 @@ window.addEventListener("load", () => {
    console.log("Page loaded 🚀");
    sendVisitorData();
    /* =====================
-   CONTACT RIPPLE EFFECT
+   CONTACT 3D LIQUID OCEAN
 ===================== */
-const rippleCanvas = document.getElementById('contactRipple');
-if(rippleCanvas) {
-   const ctxR = rippleCanvas.getContext('2d', { alpha: true });
-   let ripples = [];
-   const contactSec = document.getElementById('contact');
-   
-   function resizeRipple() {
-      rippleCanvas.width = contactSec.clientWidth;
-      rippleCanvas.height = contactSec.clientHeight;
-   }
-   window.addEventListener('resize', resizeRipple);
-   resizeRipple();
+const contactSec = document.getElementById('contact');
+const contactContent = document.querySelector('.contactContent');
+if(contactSec) {
+   // Inject dedicated webgl container layer under the form
+   const waterContainer = document.createElement('div');
+   waterContainer.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none;';
+   contactSec.insertBefore(waterContainer, contactContent);
 
+   const sceneWt = new THREE.Scene();
+   const cameraWt = new THREE.PerspectiveCamera(45, contactSec.clientWidth / contactSec.clientHeight, 0.1, 100);
+   cameraWt.position.z = 15;
+   cameraWt.position.y = -8;
+   cameraWt.lookAt(0, 0, 0);
+   
+   const rendererWt = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+   rendererWt.setSize(contactSec.clientWidth, contactSec.clientHeight);
+   rendererWt.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 1.5));
+   waterContainer.appendChild(rendererWt.domElement);
+
+   const geoWt = new THREE.PlaneGeometry(60, 40, 60, 40);
+   geoWt.rotateX(-Math.PI / 2);
+   const matWt = new THREE.MeshBasicMaterial({ color: 0x6366f1, wireframe: true, transparent: true, opacity: 0.15 });
+   const waterMesh = new THREE.Mesh(geoWt, matWt);
+   sceneWt.add(waterMesh);
+
+   const positionsData = waterMesh.geometry.attributes.position;
+   const originalZ = [];
+   for(let i=0; i<positionsData.count; i++) originalZ.push(positionsData.getZ(i));
+
+   let waterDrops = [];
    contactSec.addEventListener('mousemove', e => {
-      const rect = rippleCanvas.getBoundingClientRect();
-      ripples.push({
-         x: e.clientX - rect.left,
-         y: e.clientY - rect.top,
-         radius: 0,
-         maxRadius: Math.random() * 60 + 40,
-         alpha: 0.6
-      });
+      const rect = contactSec.getBoundingClientRect();
+      const nx = (e.clientX - rect.left) / rect.width * 2 - 1;
+      const ny = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      
+      waterDrops.push({ x: nx * 30, z: -ny * 20, time: 0, power: 1.5 });
+      if(waterDrops.length > 5) waterDrops.shift(); 
    });
 
-   let lastRippleTime = 0;
-   function animateRipples(time) {
-      requestAnimationFrame(animateRipples);
-      if (time - lastRippleTime < 16) return; // limit to ~60fps
-      lastRippleTime = time;
+   let obsWtHit = false;
+   new IntersectionObserver(e => obsWtHit = e[0].isIntersecting).observe(contactSec);
 
-      ctxR.clearRect(0, 0, rippleCanvas.width, rippleCanvas.height);
-      for(let i=0; i<ripples.length; i++) {
-         const r = ripples[i];
-         ctxR.beginPath();
-         ctxR.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-         ctxR.strokeStyle = `rgba(168, 85, 247, ${r.alpha})`;
-         ctxR.lineWidth = 2.5;
-         ctxR.stroke();
-         r.radius += 3.5;
-         r.alpha -= 0.015;
+   function animateWater() {
+      requestAnimationFrame(animateWater);
+      if(!obsWtHit) return;
+
+      for(let i=0; i<waterDrops.length; i++) waterDrops[i].time += 0.08;
+      
+      for(let i=0; i<positionsData.count; i++) {
+         const px = positionsData.getX(i);
+         const pz = positionsData.getZ(i);
+         let waveDisp = 0;
+         for(let d=0; d<waterDrops.length; d++) {
+             const drop = waterDrops[d];
+             const dist = Math.sqrt(Math.pow(px - drop.x, 2) + Math.pow(pz - drop.z, 2));
+             if(dist < drop.time * 20 && dist > 0.1) {
+                const ring = Math.sin(dist - drop.time * 10);
+                waveDisp += (ring * drop.power) / (dist * 0.5 + 1);
+             }
+         }
+         positionsData.setY(i, waveDisp);
       }
-      ripples = ripples.filter(r => r.alpha > 0.01);
+      positionsData.needsUpdate = true;
+      rendererWt.render(sceneWt, cameraWt);
    }
-   requestAnimationFrame(animateRipples);
+   animateWater();
+   
+   window.addEventListener('resize', () => {
+      cameraWt.aspect = contactSec.clientWidth / contactSec.clientHeight;
+      cameraWt.updateProjectionMatrix();
+      rendererWt.setSize(contactSec.clientWidth, contactSec.clientHeight);
+   });
 }
 });
 
