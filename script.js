@@ -63,7 +63,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 
 // Reveal Sections
-document.querySelectorAll(".section, .card, .eduCard, .workCard").forEach(el => {
+document.querySelectorAll(".section, .card, .eduCard, .workCard, .projectCard").forEach(el => {
    gsap.fromTo(el, 
       { opacity: 0, y: 80, scale: 0.95, rotationX: 5 },
       { opacity: 1, y: 0, scale: 1, rotationX: 0, duration: 1, ease: "power3.out",
@@ -515,7 +515,7 @@ function apply3DTilt(selector) {
       });
    });
 }
-apply3DTilt(".card, .eduCard, .workCard");
+apply3DTilt(".card, .eduCard, .workCard, .projectCard");
 
 /* =====================
    NAV ACTIVE LINK ON SCROLL
